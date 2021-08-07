@@ -1,0 +1,18 @@
+{{- if .Values.nodePortService.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tc-server-chart.fullname" . }}-nodeport
+  labels:
+    {{- include "tc-server-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.nodePortService.type }}
+  ports:
+    - port: 8111
+      targetPort: 8111
+      nodePort: {{ default 31900 .Values.nodePortService.port }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "tc-server-chart.selectorLabels" . | nindent 4 }}
+  {{- end }}

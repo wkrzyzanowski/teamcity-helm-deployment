@@ -1,0 +1,145 @@
+# Default values for tc-server-chart.
+# Annotations
+podAnnotations: {}
+
+
+# Environment Variables
+# Should be passed as map:
+# environment:
+#   MY_VAR: "value"
+#   ANOTHER: 123
+tcserver:
+  environment:
+    FIRST_ARGUMENT: "test-arg"
+    SECOND_ARGUMENT: "hello"
+
+# Image
+image:
+  repository: jetbrains/teamcity-server
+  pullPolicy: IfNotPresent
+  tag: "2021.1.2"
+
+
+# Secrets and security
+imagePullSecrets: []
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+podSecurityContext:
+  fsGroup: 1000
+serviceAccount:
+  create: true
+  annotations: {}
+
+
+# Network Communication
+service:
+  type: ClusterIP
+  # default: 8111
+  port: ""
+nodePortService:
+  enabled: true
+  type: NodePort
+  # default: 31900
+  port: ""
+ingress:
+  enabled: false
+
+# Health checks
+livenessProbe:
+  httpGet:
+    # default: "/js/polyfills.js"
+    path: ""
+    # default: "8111" (ClusterIp)
+    port: ""
+  initialDelaySeconds: 60
+  failureThreshold: 10
+  timeoutSeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+readinessProbe:
+  httpGet:
+    # default: "/js/polyfills.js"
+    path: ""
+    # default: "8111" (ClusterIp)
+    port: ""
+  initialDelaySeconds: 60
+  failureThreshold: 10
+  timeoutSeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+
+
+# Persistence
+persistence:
+  enabled: true
+  volume:
+    data:
+      # default: "teamcity-server-data-pv"
+      storageClassName: ""
+      # default: "ReadWriteOnce"
+      accessMode: ""
+      capacity:
+        # default: "30Gi"
+        storage: ""
+      # default: "Retain"
+      reclaimPolicy: ""
+      # default "/var/teamcity/server/data"
+      hostPath: ""
+    logs:
+      # default: "teamcity-server-logs-pv"
+      storageClassName: ""
+      # default: "ReadWriteOnce"
+      accessMode: ""
+      capacity:
+        # default: "5Gi"
+        storage: ""
+      # default: "Retain"
+      reclaimPolicy: ""
+      # default "/var/teamcity/server/logs"
+      hostPath: ""
+  claim:
+    # default: "ReadWriteOnce"
+    accessMode: ""
+    data:
+      requests:
+        # default "5Gi"
+        storage: ""
+    logs:
+      requests:
+        # default "1Gi"
+        storage: ""
+
+
+
+# Performance
+resources:
+  requests:
+    cpu: 500m
+    memory: 2G
+#   limits:
+#     cpu: 100m
+#     memory: 8G
+
+
+# Deployment
+deployment:
+  strategy:
+    # default: "RollingUpdate"
+    type: ""
+    rollingUpdate:
+      # default "0"
+      maxUnavailable: ""
+      # default "1"
+      maxSurge: ""
+
+
+# Scaling and replicas
+replicaCount: 1
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

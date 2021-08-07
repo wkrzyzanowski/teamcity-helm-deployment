@@ -1,0 +1,33 @@
+{{- if .Values.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "tc-server-chart.fullname" . }}-data-pv
+  labels:
+    {{- include "tc-server-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ default "teamcity-server-data-pv" .Values.persistence.volume.data.storageClassName }}
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.volume.data.accessMode }}
+  capacity:
+    storage: {{ default "30Gi" .Values.persistence.volume.data.capacity.storage }}
+  persistentVolumeReclaimPolicy: {{ default "Retain" .Values.persistence.volume.data.reclaimPolicy }}
+  hostPath:
+    path: {{ default "/var/teamcity/server/data" .Values.persistence.volume.data.hostPath }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "tc-server-chart.fullname" . }}-logs-pv
+  labels:
+  {{- include "tc-server-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ default "teamcity-server-logs-pv" .Values.persistence.volume.logs.storageClassName }}
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.volume.logs.accessMode }}
+  capacity:
+    storage: {{ default "5Gi" .Values.persistence.volume.logs.capacity.storage }}
+  persistentVolumeReclaimPolicy: {{ default "Retain" .Values.persistence.volume.logs.reclaimPolicy }}
+  hostPath:
+    path: {{ default "/var/teamcity/server/logs" .Values.persistence.volume.logs.hostPath }}
+  {{- end }}

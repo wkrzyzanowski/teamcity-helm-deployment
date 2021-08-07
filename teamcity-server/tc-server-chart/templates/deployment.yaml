@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tc-server-chart.fullname" . }}
+  labels:
+    {{- include "tc-server-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: {{ default "RollingUpdate" .Values.deployment.strategy.type }}
+    rollingUpdate:
+      maxUnavailable: {{ default 0 .Values.deployment.strategy.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ default 1 .Values.deployment.strategy.rollingUpdate.maxSurge }}
+  selector:
+    matchLabels:
+      {{- include "tc-server-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "tc-server-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "tc-server-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8111
+              protocol: TCP
+          env:
+            {{- range $k, $v := .Values.tcserver.environment }}
+            - name: {{ $k }}
+              value: {{ $v }}
+            {{ end }}
+          volumeMounts:
+            - name: teamcity-server-data
+              mountPath: /data/teamcity_server/datadir
+            - name: teamcity-server-logs
+              mountPath: /opt/teamcity/logs
+          livenessProbe:
+            httpGet:
+              path: {{ default "/js/polyfills.js" .Values.livenessProbe.httpGet.path }}
+              port: {{ default 8111 .Values.service.port }}
+            initialDelaySeconds: {{ default 60 .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ default 10 .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ default 10 .Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ default 10 .Values.livenessProbe.failureThreshold }}
+            successThreshold: {{ default 1 .Values.livenessProbe.successThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ default "/js/polyfills.js" .Values.livenessProbe.httpGet.path }}
+              port: {{ default 8111 .Values.service.port }}
+            initialDelaySeconds: {{ default 60 .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ default 10 .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ default 10 .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ default 10 .Values.readinessProbe.failureThreshold }}
+            successThreshold: {{ default 1 .Values.readinessProbe.successThreshold }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      {{ if .Values.persistence.enabled }}
+        - name: teamcity-server-data
+          persistentVolumeClaim:
+            claimName: {{ include "tc-server-chart.fullname" . }}-data-pvc
+      {{- end }}
+        {{ if .Values.persistence.enabled }}
+        - name: teamcity-server-logs
+          persistentVolumeClaim:
+            claimName: {{ include "tc-server-chart.fullname" . }}-logs-pvc
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
