@@ -1,0 +1,33 @@
+{{- if .Values.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "{{ include "tc-agent-chart.fullname" . }}-data-pv"
+  labels:
+  {{- include "tc-agent-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: "{{ default "teamcity-agent-data-pv" .Values.persistence.volume.data.storageClassName }}-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.volume.data.accessMode }}
+  capacity:
+    storage: {{ default "10Gi" .Values.persistence.volume.data.capacity.storage }}
+  persistentVolumeReclaimPolicy: {{ default "Retain" .Values.persistence.volume.data.reclaimPolicy }}
+  hostPath:
+    path: "{{ default "/var/teamcity/agents/agent" .Values.persistence.volume.data.hostPath }}_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "{{ include "tc-agent-chart.fullname" . }}-config-pv"
+  labels:
+  {{- include "tc-agent-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: "{{ default "teamcity-agent-config-pv" .Values.persistence.volume.config.storageClassName }}-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.volume.config.accessMode }}
+  capacity:
+    storage: {{ default "500Mi" .Values.persistence.volume.config.capacity.storage }}
+  persistentVolumeReclaimPolicy: {{ default "Retain" .Values.persistence.volume.config.reclaimPolicy }}
+  hostPath:
+    path: "{{ default "/var/teamcity/agents/agent" .Values.persistence.volume.config.hostPath }}_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/config"
+  {{- end }}

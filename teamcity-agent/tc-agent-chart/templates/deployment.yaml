@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tc-agent-chart.fullname" . }}
+  labels:
+  {{- include "tc-agent-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: {{ default "RollingUpdate" .Values.deployment.strategy.type }}
+    rollingUpdate:
+      maxUnavailable: {{ default 0 .Values.deployment.strategy.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ default 1 .Values.deployment.strategy.rollingUpdate.maxSurge }}
+  selector:
+    matchLabels:
+  {{- include "tc-agent-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+    {{- include "tc-agent-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "tc-agent-chart.serviceAccountName" . }}
+      securityContext:
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9090
+              protocol: TCP
+          env:
+            - name: BUILD_AGENT_NO
+              value: {{ default "0" .Values.tcagent.BUILD_AGENT_NO | quote }}
+            {{- range $k, $v := .Values.tcagent.environment }}
+            - name: {{ $k }}
+              value: {{ $v }}
+          {{ end }}
+          volumeMounts:
+            - name: teamcity-agent-data
+              mountPath: /var/teamcity/agents/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/work
+              subPath: work
+            - name: teamcity-agent-data
+              mountPath: /var/teamcity/agents/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/temp
+              subPath: temp
+            - name: teamcity-agent-data
+              mountPath: /var/teamcity/agents/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/tools
+              subPath: tools
+            - name: teamcity-agent-data
+              mountPath: /var/teamcity/agents/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/plugins
+              subPath: plugins
+            - name: teamcity-agent-data
+              mountPath: /var/teamcity/agents/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/system
+              subPath: system
+            - name: teamcity-agent-config
+              mountPath: /data/teamcity_agent/conf
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+          resources:
+      {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        {{ if .Values.persistence.enabled }}
+        - name: teamcity-agent-data
+          persistentVolumeClaim:
+            claimName: "{{ include "tc-agent-chart.fullname" . }}-data-pvc"
+        - name: teamcity-agent-config
+          persistentVolumeClaim:
+            claimName: "{{ include "tc-agent-chart.fullname" . }}-config-pvc"
+        - name: docker-sock
+          hostPath:
+            path: "/var/run/docker.sock"
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}

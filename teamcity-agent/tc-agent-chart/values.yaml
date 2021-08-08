@@ -1,0 +1,119 @@
+# Default values for tc-server-chart.
+# Annotations
+podAnnotations: {}
+
+
+# Environment Variables
+# Should be passed as map:
+# environment:
+#   MY_VAR: "value"
+#   ANOTHER: 123
+tcagent:
+  BUILD_AGENT_NO: 0
+  environment:
+    SERVER_URL: "http://teamcity-server-tc-server-clusterip:8111"
+    DOCKER_IN_DOCKER: "start"
+
+# Image
+# Custom agent to build within the {gitroot}/teamcity-agent/docker/Dockerfile
+image:
+  repository: localhost:32000/teamcity_agent_0
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+
+# Secrets and security
+imagePullSecrets: []
+securityContext:
+  privileged: true
+  runAsUser: 0
+#  runAsNonRoot: true
+#  runAsUser: 1000
+#  runAsGroup: 1000
+podSecurityContext:
+#  fsGroup: 1000
+serviceAccount:
+  create: true
+  annotations: {}
+
+
+# Network Communication
+service:
+  type: ClusterIP
+  # default: 9090
+  port: ""
+ingress:
+  enabled: false
+
+# Persistence
+persistence:
+  enabled: true
+  volume:
+    data:
+      # default: "teamcity-agent-data-pv-${BUILD_AGENT_NO}"
+      storageClassName: ""
+      # default: "ReadWriteOnce"
+      accessMode: ""
+      capacity:
+        # default: "30Gi"
+        storage: ""
+      # default: "Retain"
+      reclaimPolicy: ""
+      # default "/var/teamcity/agents/agent_${BUILD_AGENT_NO}/data"
+      hostPath: ""
+    config:
+      # default: "teamcity-agent-config-pv-${BUILD_AGENT_NO}"
+      storageClassName: ""
+      # default: "ReadWriteOnce"
+      accessMode: ""
+      capacity:
+        # default: "500Mi"
+        storage: ""
+      # default: "Retain"
+      reclaimPolicy: ""
+      # default "/var/teamcity/agents/agent_${BUILD_AGENT_NO}/config"
+      hostPath: ""
+  claim:
+    # default: "ReadWriteOnce"
+    accessMode: ""
+    data:
+      requests:
+        # default "5Gi"
+        storage: ""
+    config:
+      requests:
+        # default "1Gi"
+        storage: ""
+
+
+
+# Performance
+resources:
+  requests:
+    cpu: 500m
+    memory: 2G
+#   limits:
+#     cpu: 100m
+#     memory: 8G
+
+
+# Deployment
+deployment:
+  strategy:
+    # default: "RollingUpdate"
+    type: ""
+    rollingUpdate:
+      # default "0"
+      maxUnavailable: ""
+      # default "1"
+      maxSurge: ""
+
+
+# Scaling and replicas
+replicaCount: 1
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

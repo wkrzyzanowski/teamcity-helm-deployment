@@ -1,0 +1,29 @@
+{{- if .Values.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ include "tc-agent-chart.fullname" . }}-data-pvc"
+  labels:
+    {{- include "tc-agent-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: "{{ default "teamcity-agent-data-pv" .Values.persistence.volume.data.storageClassName }}-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.claim.accessMode }}
+  resources:
+    requests:
+      storage: {{ default "5Gi" .Values.persistence.claim.data.requests.storage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ include "tc-agent-chart.fullname" . }}-config-pvc"
+  labels:
+  {{- include "tc-agent-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: "{{ default "teamcity-agent-config-pv" .Values.persistence.volume.config.storageClassName }}-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.claim.accessMode }}
+  resources:
+    requests:
+      storage: {{ default "500Mi" .Values.persistence.claim.config.requests.storage }}
+  {{- end }}
