@@ -1,0 +1,17 @@
+{{- if .Values.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "postgres-db-chart.fullname" . }}-data-pv
+  labels:
+    {{- include "postgres-db-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ default "postgres-db-data-pv" .Values.persistence.volume.data.storageClassName }}
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.volume.data.accessMode }}
+  capacity:
+    storage: {{ default "10Gi" .Values.persistence.volume.data.capacity.storage }}
+  persistentVolumeReclaimPolicy: {{ default "Retain" .Values.persistence.volume.data.reclaimPolicy }}
+  hostPath:
+    path: {{ default "/var/postgres/data" .Values.persistence.volume.data.hostPath }}
+  {{- end }}

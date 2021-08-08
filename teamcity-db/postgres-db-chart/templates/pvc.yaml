@@ -1,0 +1,15 @@
+{{- if .Values.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "postgres-db-chart.fullname" . }}-data-pvc
+  labels:
+    {{- include "postgres-db-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ default "postgres-db-data-pv" .Values.persistence.volume.data.storageClassName }}
+  accessModes:
+    - {{ default "ReadWriteOnce" .Values.persistence.claim.accessMode }}
+  resources:
+    requests:
+      storage: {{ default "1Gi" .Values.persistence.claim.data.requests.storage }}
+  {{- end }}

@@ -1,0 +1,114 @@
+# Default values for postgres-db-chart.
+# Annotations
+podAnnotations: {}
+
+
+# Environment Variables
+# Should be passed as map:
+# environment:
+#   MY_VAR: "value"
+#   ANOTHER: 123
+postgresdb:
+  environment:
+    POSTGRES_PASSWORD: "teamcity_password"
+    POSTGRES_USER: "teamcity_user"
+    POSTGRES_DB: "teamcity_db"
+
+
+# Image
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  tag: "13.3-buster"
+
+
+# Secrets and security
+imagePullSecrets: []
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  runAsGroup: 999
+podSecurityContext:
+  fsGroup: 999
+serviceAccount:
+  create: true
+  annotations: {}
+
+
+# Network Communication
+service:
+  type: ClusterIP
+  # default: 5432
+  port: ""
+ingress:
+  enabled: false
+
+# Health checks
+livenessProbe:
+  initialDelaySeconds: 60
+  failureThreshold: 10
+  timeoutSeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+readinessProbe:
+  initialDelaySeconds: 60
+  failureThreshold: 10
+  timeoutSeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+
+
+# Persistence
+persistence:
+  enabled: true
+  volume:
+    data:
+      # default: "postgres-db-data-pv"
+      storageClassName: ""
+      # default: "ReadWriteOnce"
+      accessMode: ""
+      capacity:
+        # default: "10Gi"
+        storage: ""
+      # default: "Retain"
+      reclaimPolicy: ""
+      # default "/var/postgres/data"
+      hostPath: ""
+  claim:
+    # default: "ReadWriteOnce"
+    accessMode: ""
+    data:
+      requests:
+        # default "5Gi"
+        storage: ""
+
+# Performance
+resources:
+  requests:
+    cpu: 500m
+    memory: 2G
+#   limits:
+#     cpu: 100m
+#     memory: 8G
+
+
+# Deployment
+deployment:
+  strategy:
+    # default: "RollingUpdate"
+    type: ""
+    rollingUpdate:
+      # default "0"
+      maxUnavailable: ""
+      # default "1"
+      maxSurge: ""
+
+
+# Scaling and replicas
+replicaCount: 1
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
