@@ -13,7 +13,7 @@ spec:
     storage: {{ default "10Gi" .Values.persistence.volume.data.capacity.storage }}
   persistentVolumeReclaimPolicy: {{ default "Retain" .Values.persistence.volume.data.reclaimPolicy }}
   hostPath:
-    path: "{{ default "/var/teamcity/agents/agent" .Values.persistence.volume.data.hostPath }}_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
+    path: "{{ default "/var/teamcity/agent" .Values.persistence.volume.data.hostPath }}_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -29,5 +29,5 @@ spec:
     storage: {{ default "500Mi" .Values.persistence.volume.config.capacity.storage }}
   persistentVolumeReclaimPolicy: {{ default "Retain" .Values.persistence.volume.config.reclaimPolicy }}
   hostPath:
-    path: "{{ default "/var/teamcity/agents/agent" .Values.persistence.volume.config.hostPath }}_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/config"
+    path: "{{ default "/var/teamcity/agent" .Values.persistence.volume.config.hostPath }}_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/config"
   {{- end }}

@@ -62,7 +62,7 @@ persistence:
         storage: ""
       # default: "Retain"
       reclaimPolicy: ""
-      # default "/var/teamcity/agents/agent_${BUILD_AGENT_NO}/data"
+      # default "/var/teamcity/agent_${BUILD_AGENT_NO}/data"
       hostPath: ""
     config:
       # default: "teamcity-agent-config-pv-${BUILD_AGENT_NO}"
@@ -74,7 +74,7 @@ persistence:
         storage: ""
       # default: "Retain"
       reclaimPolicy: ""
-      # default "/var/teamcity/agents/agent_${BUILD_AGENT_NO}/config"
+      # default "/var/teamcity/agent_${BUILD_AGENT_NO}/config"
       hostPath: ""
   claim:
     # default: "ReadWriteOnce"
