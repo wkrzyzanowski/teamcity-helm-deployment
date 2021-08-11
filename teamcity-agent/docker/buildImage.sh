@@ -20,7 +20,7 @@ set -u
 echo "Build Docker image for teamcity_agent_$agent_number"
 
 set -x
-
+echo "Build 1/3..."
 docker build \
   --rm \
   -t "teamcity_agent_$agent_number:latest" \
@@ -28,6 +28,14 @@ docker build \
   --build-arg "build_agent_number=$agent_number" \
   "${gitroot}"
 
+echo "Tag 2/3..."
+docker tag \
+  "teamcity_agent_$agent_number:latest" \
+  "localhost:32000/teamcity_agent_$agent_number:latest"
+
+echo "Push 3/3..."
+docker push \
+  "localhost:32000/teamcity_agent_$agent_number:latest"
 set +x
 
-echo "Docker "
+echo "Docker image for teamcity_agent_$agent_number built, tagged and pushed successfully!"
