@@ -51,19 +51,19 @@ spec:
           {{ end }}
           volumeMounts:
             - name: teamcity-agent-data
-              mountPath: /var/teamcity/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/work
+              mountPath: /opt/buildagent/work
               subPath: work
             - name: teamcity-agent-data
-              mountPath: /var/teamcity/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/temp
+              mountPath: /opt/buildagent/temp
               subPath: temp
             - name: teamcity-agent-data
-              mountPath: /var/teamcity/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/tools
+              mountPath: /opt/buildagent/tools
               subPath: tools
             - name: teamcity-agent-data
-              mountPath: /var/teamcity/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/plugins
+              mountPath: /opt/buildagent/plugins
               subPath: plugins
             - name: teamcity-agent-data
-              mountPath: /var/teamcity/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/system
+              mountPath: /opt/buildagent/system
               subPath: system
             - name: teamcity-agent-config
               mountPath: /data/teamcity_agent/conf
@@ -75,10 +75,10 @@ spec:
         {{ if .Values.persistence.enabled }}
         - name: teamcity-agent-data
           persistentVolumeClaim:
-            claimName: "{{ include "tc-agent-chart.fullname" . }}-data-pvc"
+            claimName: "{{ include "tc-agent-chart.fullname" . }}-data-pvc-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
         - name: teamcity-agent-config
           persistentVolumeClaim:
-            claimName: "{{ include "tc-agent-chart.fullname" . }}-config-pvc"
+            claimName: "{{ include "tc-agent-chart.fullname" . }}-config-pvc-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
         - name: docker-sock
           hostPath:
             path: "/var/run/docker.sock"

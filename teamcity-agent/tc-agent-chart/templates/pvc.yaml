@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: "{{ include "tc-agent-chart.fullname" . }}-data-pvc"
+  name: "{{ include "tc-agent-chart.fullname" . }}-data-pvc-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
   labels:
     {{- include "tc-agent-chart.labels" . | nindent 4 }}
 spec:
@@ -16,7 +16,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: "{{ include "tc-agent-chart.fullname" . }}-config-pvc"
+  name: "{{ include "tc-agent-chart.fullname" . }}-config-pvc-{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}"
   labels:
   {{- include "tc-agent-chart.labels" . | nindent 4 }}
 spec:
