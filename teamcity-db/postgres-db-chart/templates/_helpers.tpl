@@ -48,6 +48,7 @@ Selector labels
 {{- define "postgres-db-chart.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "postgres-db-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+componentName: {{ .Values.labels.componentName }}
 {{- end }}
 
 {{/*

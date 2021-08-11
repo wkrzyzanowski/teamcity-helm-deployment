@@ -2,6 +2,8 @@
 # Annotations
 podAnnotations: {}
 
+labels:
+  componentName: "teamcity_db"
 
 # Environment Variables
 # Should be passed as map:

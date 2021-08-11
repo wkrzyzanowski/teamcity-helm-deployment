@@ -2,6 +2,9 @@
 # Annotations
 podAnnotations: {}
 
+labels:
+  componentName: "teamcity_agent_0"
+
 
 # Environment Variables
 # Should be passed as map:
@@ -25,13 +28,13 @@ image:
 # Secrets and security
 imagePullSecrets: []
 securityContext:
-  privileged: true
-  runAsUser: 0
-#  runAsNonRoot: true
-#  runAsUser: 1000
-#  runAsGroup: 1000
+#  privileged: true
+#  runAsUser: 0
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
 podSecurityContext:
-#  fsGroup: 1000
+  fsGroup: 1000
 serviceAccount:
   create: true
   annotations: {}

@@ -2,6 +2,8 @@
 # Annotations
 podAnnotations: {}
 
+labels:
+  componentName: "teamcity_server"
 
 # Environment Variables
 # Should be passed as map:
@@ -10,8 +12,7 @@ podAnnotations: {}
 #   ANOTHER: 123
 tcserver:
   environment:
-    FIRST_ARGUMENT: "test-arg"
-    SECOND_ARGUMENT: "hello"
+    TEST_ARGUMENT: "test-arg"
 
 # Image
 image:

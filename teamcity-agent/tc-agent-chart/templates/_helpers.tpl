@@ -48,6 +48,7 @@ Selector labels
 {{- define "tc-agent-chart.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "tc-agent-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+componentName: {{ .Values.labels.componentName }}
 {{- end }}
 
 {{/*
