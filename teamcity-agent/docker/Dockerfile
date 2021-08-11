@@ -5,7 +5,7 @@ USER root
 
 ARG build_agent_number
 
-ENV BUILD_AGENT_NO="0"
+ENV BUILD_AGENT_NO=$build_agent_number
 
 ENV DOCKER_IN_DOCKER="start"
 

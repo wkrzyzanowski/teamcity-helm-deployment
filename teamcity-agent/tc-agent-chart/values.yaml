@@ -93,8 +93,8 @@ persistence:
 # Performance
 resources:
   requests:
-    cpu: 500m
-    memory: 2G
+    cpu: 200m
+    memory: 500Mi
 #   limits:
 #     cpu: 100m
 #     memory: 8G
