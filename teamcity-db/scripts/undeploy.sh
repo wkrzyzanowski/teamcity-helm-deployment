@@ -6,8 +6,8 @@ set -o nounset  # Exit when variables are not initialized
 
 gitroot=$(git rev-parse --show-toplevel)
 
-namespace="${2:-teamcity}"
-release="${3-tc-server}"
+namespace="${1:-teamcity}"
+release="${2-teamcity-database}"
 
 echo "------------------------------"
 echo "KUBECONFIG: $KUBECONFIG"
