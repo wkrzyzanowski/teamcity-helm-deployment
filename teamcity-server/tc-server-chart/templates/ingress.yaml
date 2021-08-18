@@ -49,12 +49,12 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ $fullName }}-clusterip
                 port:
-                  number: {{ $svcPort }}
+                  number: {{ default 8111 $svcPort }}
               {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
+              serviceName: {{ $fullName }}-clusterip
+              servicePort: {{ default 8111 $svcPort }}
               {{- end }}
           {{- end }}
     {{- end }}

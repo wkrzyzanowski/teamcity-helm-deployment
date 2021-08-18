@@ -45,7 +45,21 @@ nodePortService:
   # default: 31900
   port: ""
 ingress:
-  enabled: false
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  className: nginx
+  hosts:
+    - host:
+      paths:
+      - path: /tc(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: teamcity-server-tc-server-clusterip
+            port:
+              number: 80
+
 
 # Health checks
 livenessProbe:
