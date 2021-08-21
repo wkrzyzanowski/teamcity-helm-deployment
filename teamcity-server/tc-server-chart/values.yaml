@@ -47,12 +47,17 @@ nodePortService:
 ingress:
   enabled: true
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/issuer: "letsencrypt-prod"
   className: nginx
+  tls:
+    - hosts:
+      - teamcity.wkspace.one
+      secretName: teamcity-server-tls
   hosts:
-    - host:
+    - host: teamcity.wkspace.one
       paths:
-      - path: /tc(/|$)(.*)
+      - path: /
         pathType: Prefix
         backend:
           service:
