@@ -45,10 +45,10 @@ spec:
           env:
             - name: BUILD_AGENT_NO
               value: {{ default "0" .Values.tcagent.BUILD_AGENT_NO | quote }}
-            {{- range $k, $v := .Values.tcagent.environment }}
-            - name: {{ $k }}
-              value: {{ $v }}
-          {{ end }}
+            {{- range .Values.tcagent.env }}
+            - name: {{ .name }}
+              value: {{ .value }}
+            {{ end }}
           volumeMounts:
             - name: teamcity-agent-data
               mountPath: /var/teamcity/agent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/opt/buildagent_{{ default "0" .Values.tcagent.BUILD_AGENT_NO }}/work

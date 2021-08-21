@@ -11,8 +11,9 @@ labels:
 #   MY_VAR: "value"
 #   ANOTHER: 123
 tcserver:
-  environment:
-    TEST_ARGUMENT: "test-arg"
+  env:
+    - name: TEAMCITY_SERVER_MEM_OPTS
+      value: "-Xmx4g -XX:ReservedCodeCacheSize=450m"
 
 # Image
 image:

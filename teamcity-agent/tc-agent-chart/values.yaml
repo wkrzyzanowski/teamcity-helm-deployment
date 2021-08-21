@@ -13,9 +13,11 @@ labels:
 #   ANOTHER: 123
 tcagent:
   BUILD_AGENT_NO: 0
-  environment:
-    SERVER_URL: "http://teamcity-server-tc-server-clusterip:8111"
-    DOCKER_IN_DOCKER: "start"
+  env:
+   - name: SERVER_URL
+     value: "http://teamcity-server-tc-server-clusterip:8111"
+   - name: DOCKER_IN_DOCKER
+     value: "start"
 
 # Image
 # Custom agent to build within the {gitroot}/teamcity-agent/docker/Dockerfile
